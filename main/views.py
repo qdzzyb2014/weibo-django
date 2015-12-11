@@ -1,9 +1,10 @@
-from django.utils import timezone
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
+from .models import User
 from .forms import LoginForm, RegistrationForm
 # Create your views here.
 
@@ -36,7 +37,6 @@ def register(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(request.POST.get('password'))
-            user.date_of_birth = timezone.now()
             user.save()
             messages.success(request, 'Sign in has successed!!!!')
             return HttpResponseRedirect(
@@ -46,5 +46,22 @@ def register(request):
     return render(request, 'main/register.html', {'form': form})
 
 
+@login_required(login_url='/main/login/')
 def about(request):
     return HttpResponse('this is a about page.')
+
+
+def logout_view(request):
+    auth.logout(request)
+    return render_to_response('main/index.html')
+
+
+@login_required(login_url='/main/login/')
+def user(request, username):
+    try:
+        user = User.object.filter(username=username).first()
+    except (KeyError, User.DoesNotExist):
+        messages.error(request, 'This user does not exist!')
+        return render(request, 'main/index.html')
+    else:
+        return render(request, 'main/user.html', {'user': user})

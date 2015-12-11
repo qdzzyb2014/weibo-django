@@ -41,6 +41,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'main.middleware.RefreshLastseenMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,4 +106,4 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'main.User'
 
 AUTHENTICATION_BACKENDS = ('main.backend.EmailAuthBackend',
-                           'main.backend.UsernameAuthBackend',)
+                           'django.contrib.auth.backends.ModelBackend',)
