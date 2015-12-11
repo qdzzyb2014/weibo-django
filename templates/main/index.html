@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+
 {% block page_content %}
-<h1>Hello,{% if user.is_authenticated %}{{  user.username }}{% else %}Stringer{% endif %}</h1>
+<h1>Hello,{% if user.is_authenticated %}{{ user.username }}{% else %}Stringer{% endif %}</h1>
 {% endblock %}
