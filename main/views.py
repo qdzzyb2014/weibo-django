@@ -5,7 +5,7 @@ from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from .models import User
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, EditProfileForm
 # Create your views here.
 
 
@@ -66,3 +66,16 @@ def user(request, username):
     else:
         return render(request, 'main/user.html',
                       {'user': user, 'gravatar': user.gravatar(size=256)})
+
+
+@login_required(login_url='/main/login/')
+def edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            return HttpResponseRedirect(
+                reverse('main:user', args={'username': user.username}))
+    else:
+        form = EditProfileForm()
+    return render(request, 'main/edit_profile.html', {'form': form})

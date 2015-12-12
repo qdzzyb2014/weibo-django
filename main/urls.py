@@ -9,4 +9,6 @@ urlpatterns = [
     url(r'^signin/$', views.register, name='signin'),
     url(r'^logout/$', views.logout_view, name='logout'),
     url(r'^user/(?P<username>\w+)/$', views.user, name='user'),
+    url(r'^edit-profile/$',
+        views.edit_profile, name='edit_profile'),
 ]
