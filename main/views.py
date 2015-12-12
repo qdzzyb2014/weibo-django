@@ -73,7 +73,10 @@ def edit_profile(request):
     if request.method == 'POST':
         form = EditProfileForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            request.user.realname = form.cleaned_data['realname']
+            request.user.loacation = form.cleaned_data['loacation']
+            request.user.about_me = form.cleaned_data['about_me']
+            request.user.save()
             return HttpResponseRedirect(
                 reverse('main:user', args={'username': user.username}))
     else:
