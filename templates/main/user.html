@@ -1,8 +1,8 @@
-{% extends "main/base.htm" %}
+{% extends "main/base.html" %}
 
 {% block page_content %}
 <div class="page-header">
-	<img src="{{ user.gravatar(size=256) }}">	
+	<img src="{{ gravatar }}">	
 	<div class="profile-header">
 		<h1>{{ user.username }}</h1>
 		{% if user.name and user.location %}
@@ -13,17 +13,18 @@
 			{% endif %}
 		</p>
 		{% endif %}
-		{% if current_user.is_administrator() %}
+         {% if user.is_administrator %}
         <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
         {% endif %}
         {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-        <p>Member since {{ user.date_of_birth }}. Last seen {{ user.last_seen }}.</p>
         <p>
-            {% if user %}
-            <a class="" href="">Edit Profile</a>
-            {% endif %}
-            {% if user.is_administrator() %}
+            Member since {{ user.date_of_birth }}.<br>
+            Last seen {{ user.last_login }}.</p>
+        <p>
+            {% if user.is_administrator %}
             <a class="" href="">Edit Profile [Admin]</a>
+            {% else %}
+            <a class="" href="">Edit Profile</a>
             {% endif %}
         </p>
     </div>

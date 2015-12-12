@@ -59,9 +59,10 @@ def logout_view(request):
 @login_required(login_url='/main/login/')
 def user(request, username):
     try:
-        user = User.object.filter(username=username).first()
+        user = User.objects.filter(username=username).first()
     except (KeyError, User.DoesNotExist):
         messages.error(request, 'This user does not exist!')
         return render(request, 'main/index.html')
     else:
-        return render(request, 'main/user.html', {'user': user})
+        return render(request, 'main/user.html',
+                      {'user': user, 'gravatar': user.gravatar(size=256)})

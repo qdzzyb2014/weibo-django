@@ -1,3 +1,4 @@
+import hashlib
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
@@ -70,7 +71,6 @@ class User(AbstractBaseUser):
     email = models.EmailField(max_length=64, blank=True, unique=True)
     username = models.CharField(max_length=30)
     date_of_birth = models.DateField(default=timezone.now)
-    last_seen = models.DateField(default=timezone.now)
     realname = models.CharField(max_length=64, null=True)
     location = models.CharField(max_length=64, null=True)
     about_me = models.TextField(null=True)
@@ -111,7 +111,8 @@ class User(AbstractBaseUser):
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
 
-    # Refresh the last_seen
-    def ping(self):
-        self.last_seen = timezone.now()
-        self.save()
+    def gravatar(self, size=100, default='identicon', rating='g'):
+        url = 'http://www.gravatar.com/avatar'
+        h = hashlib.md5(self.email.encode('utf-8')).hexdigest()
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+            url=url, hash=h, size=size, default=default, rating=rating)
