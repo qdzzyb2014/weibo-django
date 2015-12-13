@@ -116,3 +116,16 @@ class User(AbstractBaseUser):
         h = hashlib.md5(self.email.encode('utf-8')).hexdigest()
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=h, size=size, default=default, rating=rating)
+
+
+class Post(models.Model):
+    author = models.ForeignKey(User, related_name='post')
+    body = models.TextField()
+    timestamp = models.DateTimeField('data published', default=timezone.now)
+
+    class Meta:
+        verbose_name = "Post"
+        verbose_name_plural = "Posts"
+
+    def __str__(self):
+        return self.author.username

@@ -1,0 +1,15 @@
+<div>
+    <ul class="posts">
+        {% for post in posts %}
+            <li class="post">
+                <div class="post-author">
+                    <a href="{% url 'main:user' post.author.username %}">
+                        {{ post.author.username }}
+                    </a>
+                </div>
+                <div class="post-date">{{ post.timestamp }}</div>
+                <div class="post-body">{{ post.body }}</div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

@@ -1,5 +1,5 @@
 from django import forms
-from .models import User
+from .models import User, Post
 
 
 class LoginForm(forms.ModelForm):
@@ -32,3 +32,10 @@ class EditProfileForm(forms.ModelForm):
     def save(self, commit=True):
         user = super(EditProfileForm, self).save(commit=False)
         return user
+
+
+class PostForm(forms.ModelForm):
+
+    class Meta:
+        model = Post
+        fields = ['body']

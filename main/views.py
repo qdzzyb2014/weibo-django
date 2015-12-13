@@ -4,13 +4,25 @@ from django.core.urlresolvers import reverse
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from .models import User
-from .forms import LoginForm, RegistrationForm, EditProfileForm
+from .models import User, Post
+from .forms import LoginForm, RegistrationForm, EditProfileForm,\
+    PostForm
 # Create your views here.
 
 
 def index(request):
-    return render(request, 'main/index.html')
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = Post.objects.create(
+                body=form.cleaned_data['body'],
+                author=request.user)
+            post.save()
+            return HttpResponseRedirect(reverse('main:index'))
+    form = PostForm()
+    posts = Post.objects.order_by('-timestamp')
+    return render(request, 'main/index.html',
+                  {'form': form, 'posts': posts})
 
 
 def login(request):
@@ -64,8 +76,11 @@ def user(request, username):
         messages.error(request, 'This user does not exist!')
         return render(request, 'main/index.html')
     else:
+        posts = user.post.order_by('-timestamp')
         return render(request, 'main/user.html',
-                      {'user': user, 'gravatar': user.gravatar(size=256)})
+                      {'user': user,
+                       'gravatar': user.gravatar(size=256),
+                       'posts': posts})
 
 
 @login_required(login_url='/main/login/')
@@ -74,11 +89,11 @@ def edit_profile(request):
         form = EditProfileForm(request.POST)
         if form.is_valid():
             request.user.realname = form.cleaned_data['realname']
-            request.user.loacation = form.cleaned_data['loacation']
+            request.user.location = form.cleaned_data['location']
             request.user.about_me = form.cleaned_data['about_me']
             request.user.save()
             return HttpResponseRedirect(
-                reverse('main:user', args={'username': user.username}))
+                reverse('main:user', args=[request.user.username]))
     else:
         form = EditProfileForm()
     return render(request, 'main/edit_profile.html', {'form': form})
