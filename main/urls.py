@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^user/(?P<username>\w+)/$', views.user, name='user'),
     url(r'^edit-profile/$',
         views.edit_profile, name='edit_profile'),
+    url(r'^post/(?P<id>\d+)', views.post, name='post')
 ]

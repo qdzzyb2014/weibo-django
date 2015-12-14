@@ -1,13 +1,17 @@
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response,\
+    get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import User, Post
 from .forms import LoginForm, RegistrationForm, EditProfileForm,\
     PostForm
 # Create your views here.
+
+PER_PAGE = 10  # per_page Paginator
 
 
 def index(request):
@@ -20,7 +24,16 @@ def index(request):
             post.save()
             return HttpResponseRedirect(reverse('main:index'))
     form = PostForm()
-    posts = Post.objects.order_by('-timestamp')
+
+    page = request.GET.get('page')
+    paginator = Paginator(Post.objects.order_by('-timestamp'), PER_PAGE)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
     return render(request, 'main/index.html',
                   {'form': form, 'posts': posts})
 
@@ -97,3 +110,8 @@ def edit_profile(request):
     else:
         form = EditProfileForm()
     return render(request, 'main/edit_profile.html', {'form': form})
+
+
+def post(request, id):
+    post = get_object_or_404(Post, pk=id)
+    return render(request, 'main/post.html', {'posts': [post]})
