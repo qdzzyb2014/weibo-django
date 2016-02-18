@@ -1,5 +1,5 @@
 from django.shortcuts import render, render_to_response,\
-    get_object_or_404
+    get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib import auth, messages
@@ -64,8 +64,7 @@ def register(request):
             user.set_password(request.POST.get('password'))
             user.save()
             messages.success(request, 'Sign in has successed!!!!')
-            return HttpResponseRedirect(
-                reverse(login))
+            return redirect(reverse('main:index'))
     else:
         form = RegistrationForm()
     return render(request, 'main/register.html', {'form': form})

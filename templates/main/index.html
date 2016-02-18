@@ -2,6 +2,7 @@
 
 {% block page_content %}
 <h1>Hello,{% if user.is_authenticated %}{{ user.username }}{% else %}Stringer{% endif %}</h1>
+{% if user.is_authenticated %}
 <div>
     <form method="post">
         {% csrf_token %}
@@ -9,5 +10,6 @@
         <input type="submit" value="submit">
     </form>
 </div>
+{% endif %}
 {% include "main/_posts.html" %}
 {% endblock %}
