@@ -11,7 +11,7 @@ class LoginForm(forms.ModelForm):
             'password': forms.PasswordInput(),
         }
         labels = {
-            'email': '邮箱',
+            'email': 'email',
         }
 
 
