@@ -78,6 +78,8 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
+    follower = models.ManyToManyField('self', related_name='followed')
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -134,6 +136,24 @@ class User(AbstractBaseUser):
                 date_of_birth=forgery_py.date.date(True)
             )
             u.save()
+
+    # followed and follower
+    def follow(self, user):
+        if not self.is_following(user):
+            self.follower.add(user)
+
+    def unfollow(self, user):
+        f = self.followed.objects.filter(followed_id=user.id).first()
+        if f:
+            f.delete()
+
+    def is_following(self, user):
+        return self.followed.objects.filter(
+            followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        return self.follower.filter(
+            follower_id=user.id).first() is not None
 
 
 class Post(models.Model):
