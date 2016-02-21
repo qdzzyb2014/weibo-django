@@ -141,19 +141,16 @@ class User(AbstractBaseUser):
     def follow(self, user):
         if not self.is_following(user):
             self.follower.add(user)
+            self.save()
 
     def unfollow(self, user):
-        f = self.followed.objects.filter(followed_id=user.id).first()
-        if f:
-            f.delete()
+        self.follower.remove(user)
 
     def is_following(self, user):
-        return self.followed.objects.filter(
-            followed_id=user.id).first() is not None
+        return user in self.follower.all()
 
     def is_followed_by(self, user):
-        return self.follower.filter(
-            follower_id=user.id).first() is not None
+        return self in user.follower.all()
 
 
 class Post(models.Model):
