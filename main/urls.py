@@ -11,5 +11,8 @@ urlpatterns = [
     url(r'^user/(?P<username>\w+)/$', views.user, name='user'),
     url(r'^edit-profile/$',
         views.edit_profile, name='edit_profile'),
-    url(r'^post/(?P<id>\d+)', views.post, name='post')
+    url(r'^post/(?P<id>\d+)', views.post, name='post'),
+    url(r'^follow/(?P<username>\w+)/$', views.follow, name='follow'),
+    url(r'^unfollow/(?P<username>\w+)/$', views.unfollow, name='unfollow'),
+    url(r'^followers/(?P<username>\w+)/$', views.followers, name='followers'),
 ]

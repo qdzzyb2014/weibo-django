@@ -70,7 +70,7 @@ def register(request):
     return render(request, 'main/register.html', {'form': form})
 
 
-@login_required(login_url='/main/login/')
+@login_required(login_url='/login/')
 def about(request):
     return HttpResponse('this is a about page.')
 
@@ -80,7 +80,7 @@ def logout_view(request):
     return render_to_response('main/index.html')
 
 
-@login_required(login_url='/main/login/')
+@login_required(login_url='/login/')
 def user(request, username):
     try:
         user = User.objects.filter(username=username).first()
@@ -95,7 +95,7 @@ def user(request, username):
                        'posts': posts})
 
 
-@login_required(login_url='/main/login/')
+@login_required(login_url='/login/')
 def edit_profile(request):
     if request.method == 'POST':
         form = EditProfileForm(request.POST)
@@ -114,3 +114,29 @@ def edit_profile(request):
 def post(request, id):
     post = get_object_or_404(Post, pk=id)
     return render(request, 'main/post.html', {'posts': [post]})
+
+
+@login_required(login_url='/login/')
+def follow(request, username):
+    user = User.objects.filter(username=username).first()
+    if request.user.is_following(user):
+        messages.error(request, 'You are already following this user.')
+        return redirect(reverse('main:user', kwargs={'username': username}))
+    request.user.follow(user)
+    messages.success(request, 'You are now following %s' % username)
+    return redirect(reverse('main:user', kwargs={'username': username}))
+
+
+@login_required(login_url='/login/')
+def unfollow(request, username):
+    user = User.objects.filter(username=username).first()
+    request.user.unfollow(user)
+    return redirect(reverse('main:user', kwargs={'username': username}))
+
+
+@login_required(login_url='/login/')
+def followers(request, username):
+    user = User.objects.filter(username=username).first()
+    followers = user.follower.all()
+    messages.success(request, 'You are now unfollowing %s' % username)
+    return render(request, 'main/followers.html', {'followers': followers})

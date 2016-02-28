@@ -1,0 +1,9 @@
+{% extends "main/base.html" %}
+
+{% block page_content %}
+<div>
+    {% for follower in followers %}
+    <a href="{% url 'main:user' follower.username %}">{{ follower.username }}</a>
+    {% endfor %}
+</div>
+{% endblock page_content %}

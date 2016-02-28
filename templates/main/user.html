@@ -21,13 +21,24 @@
             Member since {{ user.date_of_birth }}.<br>
             Last seen {{ user.last_login }}.</p>
         <p>
-            {% if user %}
+            {% if user == request.user %}
             <a class="edit_profile" href="{% url 'main:edit_profile' %}">Edit Profile</a>
             {% endif %}
             {% if user.is_administrator %}
             <a class="" href="">Edit Profile [Admin]</a>
             {% endif %}
         </p>
+        {% load follow_tags %}
+        {% user_can_follow request.user as permission%}
+        {% if user != request.user and permission%}
+            {% is_following request.user user as is_follow %}
+            {% if not is_follow %}
+                <a href="{% url 'main:follow' username=user.username %}">Follow</a> 
+            {% else %}
+                <a href="{% url 'main:unfollow' username=user.username %}">Unfollow</a>
+            {% endif %}
+        {% endif %}
+        <a href="{% url 'main:followers' username=user.username %}">Followers: <span>Followers {% follower_count user %}</span></a>
     </div>
 </div>
 <h3>Posts by {{ user.username }}</h3>

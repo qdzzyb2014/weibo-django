@@ -28,7 +28,7 @@ class Role(models.Model):
                           Permission.COMMENT |
                           Permission.WRITE_ARTICLES |
                           Permission.MODERATE_COMMENT, False),
-            'Administrator': (Permission.ADMINISTER, False)
+            'Administrator': (0xff, False)
         }
         for r in roles:
             role = Role.objects.filter(name=r).first()
@@ -78,7 +78,8 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
-    follower = models.ManyToManyField('self', related_name='followed')
+    follower = models.ManyToManyField(
+        'self', related_name='followed', symmetrical=False)
 
     objects = UserManager()
 
@@ -145,6 +146,7 @@ class User(AbstractBaseUser):
 
     def unfollow(self, user):
         self.follower.remove(user)
+        self.save()
 
     def is_following(self, user):
         return user in self.follower.all()
